@@ -1,0 +1,8 @@
+cd kwenta/
+dapploy publish --ens dapp.kwenta.eth
+
+
+
+open dapp.kwenta.eth
+
+IPNS

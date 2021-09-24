@@ -1,0 +1,107 @@
+some sort of tooling
+
+
+kwenta
+build
+upload hash to IPFS
+
+
+dapp
+    shows kwenta
+    shows eth domain
+    shows the build hash / git hash.
+
+
+what's the value? 
+just deploy to .eth
+
+@ensdomains/ensjs
+
+
+
+
+
+
+
+
+
+
+
+node
+    runs an nginx server
+    serves bundles
+    downloads new bundles according to dapploy protocol
+
+
+protocol
+    Dapployments {
+        function deploy(bytes32 bundleId);
+        event Deployment(bytes32 bundleId);
+    }
+
+    ENS {
+        name -> resolver
+    }
+
+
+dapploy.js
+    downloads list from centralized server, falls back to eth node (todo).
+    chooses a server in your region.
+    loads bundle from node.
+
+    // download from nodes
+    // 
+    <iframe>
+        
+    </iframe>
+
+
+mock deployment of ENS
+upload dapploy.js to IPFS
+connect ENS to dapploy.js
+
+
+
+
+fuck it
+the node serves the bundle
+
+
+
+what's this game? mafia? 
+where everyone is around, judging the other people
+testing if they're lying or not
+
+
+
+
+
+
+for the user
+
+- update their ENS domain (dapp)
+    generate the mini-bundle
+        <script src="/dapploy.js"/>
+        <script type="text/js">
+            dapploy({
+                id: "app.kwenta.eth",
+            })
+        </script>
+    upload it to IPFS
+    set IPFS content identifier (CID) to the hash of the above
+
+
+- run their build (cli)
+
+```sh
+cd kwenta/
+npm run build
+```
+
+
+- publish using `dapploy publish build/`
+
+    ipfs hash directory
+    Dapployments.deploy(bundleId)
+    now send file bundle to node, which receives it, calls ipfs add, and goes on.
+

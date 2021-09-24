@@ -1,0 +1,23 @@
+{
+  "name": "@dapploy/cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "dapploy": "src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^8.2.0",
+    "dotenv": "^10.0.0",
+    "glob": "^7.1.7",
+    "ipfs": "^0.58.4",
+    "ipfs-http-client": "^52.0.3",
+    "pretty-error": "^3.0.4"
+  }
+}

@@ -1,0 +1,25 @@
+
+
+write solidity
+
+on save, it live updates
+
+
+the EVM programming model
+
+Contract
+    Bytecode
+
+Messages
+    Data
+
+to update the code, you must refresh the entire contract
+
+
+
+contracts
+linked via service locator
+
+
+upgrade the sugartoken
+existing storage 
