@@ -1,27 +1,17 @@
-<html>
-    <head>
-    <title>Service-worker demo</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base src="/"></base>
 
-</head>
     <style>
-        img {
-            display: block;
-            margin: 8px;
-        }
+        * { margin: 0; padding: 0; }
+        iframe { border: 0; }
     </style>
+
+    <link rel="modulepreload" href="/sw.js">
     
-    <body>
-    
-        <img src="/placeholder.jpg" alt="Image" >
-        <img src="http://ipsumimage.appspot.com/216x120,ff7700?l=bar.png" alt="Image" itemprop="image">
-        <img src="http://ipsumimage.appspot.com/216x120,ff7700?l=baz.png" alt="Image" itemprop="image">
-        <img src="http://ipsumimage.appspot.com/216x120,ff7700?l=quiz.png" alt="Image" itemprop="image">
-    
-    <script>
-        navigator.serviceWorker.register('./sw.js', { scope: '/' })
+    <script id='serviceworker'>
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
             .then((reg) => {
                 // registration worked
                 console.log('Registration succeeded. Scope is ' + reg.scope);
@@ -30,6 +20,13 @@
                 console.log('Registration failed with ' + error);
             });
     </script>
+
     
-    </body>
+
+    <script type='text/javascript' src="/load.js"></script>
+
+</head>
+    
+<body>
+</body>
 </html>

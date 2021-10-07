@@ -251,12 +251,7 @@ added QmcnU8Vgm4FF3UXnjZMcFH8fzxAVzKVdcZdcr8YPdhJ8xK out`.split('\n').map(line =
     return {cid, path}
 })
 
-String.prototype.splice = function(start, delCount, newSubStr) {
-        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
-    };
-
-
-self.addEventListener("fetch", async function (event) {
+self.addEventListener("fetch", function (event) {
     var request = event.request;
     console.log("Detected request", request.url);
 
@@ -264,111 +259,51 @@ self.addEventListener("fetch", async function (event) {
         return;
     }
 
-    let requestUrl = new URL(request.url)
-    if (requestUrl.host != self.location.host) {
+    let urlObj = new URL(request.url)
+    if (urlObj.host != self.location.host) {
         return
     }
-    let requestPath = requestUrl.pathname
 
     // then we intercept the request and serve it from IPFS.
-    console.log("Accepted request", request.url, requestPath);
+    console.log("Accepted request", request.url);
 
     // const bundleId = 'Qmaw976qWUcc8XAhsEkE9YEB9q3tfvMZFbE33D8AQqGMED'
     const ipfsNode = `http://127.0.0.1:8080/ipfs/`
-
-    async function handleRequest() {
-        requestPath = requestPath.replace('/.dapploy/', '/')
-        console.log(`handleRequest path=${requestPath}`)
-
-        if(requestPath.startsWith('/by-ipfs/')) {
-            requestPath = requestPath.replace('/by-ipfs/', '')
-
-            // requestPath is now the IPFS hash.
-            const url = `${ipfsNode}${requestPath}/`
-            console.log('fetch', url)
-    
-            const res = await fetch(url, { redirect: 'manual' })
-    
-            if (res.headers.get("Content-Type").includes('text/html')) {
-                const text = await res.text()
-                console.log(`response ${text.length}`)
-    
-                const headPos = text.indexOf('head>')
-                console.log(headPos)
-    
-                const injectCode = `
-                <base href="/.dapploy/by-path/"></base>
-                <script>
-                if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js', { scope: '/' })
-                    .then((reg) => {
-                        // registration worked
-                        console.log('Registration succeeded. Scope is ' + reg.scope);
-                    }).catch((error) => {
-                        // registration failed
-                        console.log('Registration failed with ' + error);
-                    });
-                }
-                </script>`
-    
-                const newCode = text.splice(headPos + 5, 0, injectCode)
-                console.log(newCode.slice(0, 100))
-    
-    
-                const rewrittenResponse = new Response(newCode, { headers: { 'Content-Type': 'text/html' } });
-                return rewrittenResponse
-            } else {
-                return res
-            }
-        } else if (requestPath.startsWith('/by-path/')) {
-            requestPath = decodeURI(requestPath.replace('/by-path/', '/'))
-            // requestPath is now a normal ipfs path
-
-            let entry = ipfsCache.find(item => {
-                return item.path === requestPath
-            })
-            if (!entry) {
-                // return
-                throw new Error("No IPFS cache item found for path " + requestPath)
-            }
-
-            const url = `${ipfsNode}${entry.cid}`
-            
-            return fetch(url)
-        }
-        
+    let entry = ipfsCache.find(item => {
+        return item.path === urlObj.pathname
+    })
+    if(!entry) {
+        return
+        throw new Error("No IPFS cache item found for path "+urlObj.pathname)
     }
 
-    if (requestPath.startsWith('/.dapploy')) {
-        
-        // https://stackoverflow.com/questions/46838778/service-worker-error-event-already-responded-to
-        // This must be called synchronously.
-        event.respondWith(
-            handleRequest()
-        );
-        
-    } else {
+    const url = `${ipfsNode}${entry.cid}`
 
-        requestPath = decodeURI(requestPath)
-        // requestPath is now a normal ipfs path
-
-        let entry = ipfsCache.find(item => {
-            return item.path === requestPath
-        })
-        if (!entry) {
-            // return
-            throw new Error("No IPFS cache item found for path " + requestPath)
-        }
-
-        console.log(`${entry.path} ${entry.cid}`)
-
-        const url = `${ipfsNode}${entry.cid}`
-
-        event.respondWith(
-            fetch(url)
-        );
-    }
-
-    
+    event.respondWith(
+        // proxyRequest(request)
+        fetch(url)
+    );
 });
 
+
+// function proxyRequest(request, path) {
+    
+
+//     // find ipfs hash
+
+
+    
+
+//     return fetch(request.clone())
+//         .then(function (networkResponse) {
+//             if (networkResponse.type !== "opaque" && networkResponse.ok === false) {
+//                 throw new Error("Resource not available");
+//             }
+//             console.info("Fetch it through Network", request.url, networkResponse.type);
+//             return networkResponse;
+//         }).catch(function () {
+//             console.error("Failed to fetch", request.url);
+//             // Placeholder image for the fallback
+//             return fetch("./placeholder.jpg", { mode: "no-cors" });
+//         });
+// }
