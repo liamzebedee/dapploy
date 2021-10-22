@@ -1,32 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <base src="/"></base>
+    <head>
+        <base src="/"></base>
 
-    <style>
-        * { margin: 0; padding: 0; }
-        iframe { border: 0; }
-    </style>
+        <style>
+            * { margin: 0; padding: 0; }
+            iframe { border: 0; }
+        </style>
 
-    <link rel="modulepreload" href="/sw.js">
+        <link rel="modulepreload" href="/sw.js">
+        
+        <script id='serviceworker'>
+            navigator.serviceWorker.register('./sw.js', { scope: './' })
+                .then((reg) => {
+                    // registration worked
+                    console.log('Registration succeeded. Scope is ' + reg.scope);
+                }).catch((error) => {
+                    // registration failed
+                    console.log('Registration failed with ' + error);
+                });
+        </script>
+
+        <script type='text/javascript' src="/load.js"></script>
+    </head>
     
-    <script id='serviceworker'>
-        navigator.serviceWorker.register('./sw.js', { scope: './' })
-            .then((reg) => {
-                // registration worked
-                console.log('Registration succeeded. Scope is ' + reg.scope);
-            }).catch((error) => {
-                // registration failed
-                console.log('Registration failed with ' + error);
-            });
-    </script>
-
-    
-
-    <script type='text/javascript' src="/load.js"></script>
-
-</head>
-    
-<body>
-</body>
+    <body></body>
 </html>

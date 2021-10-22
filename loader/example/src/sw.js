@@ -258,17 +258,18 @@ String.prototype.splice = function(start, delCount, newSubStr) {
 
 self.addEventListener("fetch", async function (event) {
     var request = event.request;
-    console.log("Detected request", request.url);
+    // console.log("Detected request", request.url);
 
     if (request.method !== "GET") {
         return;
     }
 
     let requestUrl = new URL(request.url)
+    let requestPath = requestUrl.pathname
     if (requestUrl.host != self.location.host) {
+        console.log("Ignoring request", request.url, requestPath);
         return
     }
-    let requestPath = requestUrl.pathname
 
     // then we intercept the request and serve it from IPFS.
     console.log("Accepted request", request.url, requestPath);
@@ -278,15 +279,15 @@ self.addEventListener("fetch", async function (event) {
 
     async function handleRequest() {
         requestPath = requestPath.replace('/.dapploy/', '/')
-        console.log(`handleRequest path=${requestPath}`)
+        // console.log(`handleRequest path=${requestPath}`)
 
         if(requestPath.startsWith('/by-ipfs/')) {
             requestPath = requestPath.replace('/by-ipfs/', '')
 
             // requestPath is now the IPFS hash.
             const url = `${ipfsNode}${requestPath}/`
-            console.log('fetch', url)
-    
+            console.log(`Loading from IPFS, ${requestPath}`)
+        
             const res = await fetch(url, { redirect: 'manual' })
     
             if (res.headers.get("Content-Type").includes('text/html')) {
@@ -295,7 +296,8 @@ self.addEventListener("fetch", async function (event) {
     
                 const headPos = text.indexOf('head>')
                 console.log(headPos)
-    
+                
+                console.log('injecting dapploy loader code')
                 const injectCode = `
                 <base href="/.dapploy/by-path/"></base>
                 <script>
@@ -327,6 +329,7 @@ self.addEventListener("fetch", async function (event) {
             let entry = ipfsCache.find(item => {
                 return item.path === requestPath
             })
+            console.log(`Loading from IPFS, ${entry.path} -> ${entry.cid}`)
             if (!entry) {
                 // return
                 throw new Error("No IPFS cache item found for path " + requestPath)
@@ -360,7 +363,7 @@ self.addEventListener("fetch", async function (event) {
             throw new Error("No IPFS cache item found for path " + requestPath)
         }
 
-        console.log(`${entry.path} ${entry.cid}`)
+        console.log(`Loading from IPFS, ${entry.path} -> ${entry.cid}`)
 
         const url = `${ipfsNode}${entry.cid}`
 
