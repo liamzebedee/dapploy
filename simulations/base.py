@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from random import random, choice
 import math
 from collections import defaultdict
-from agents import Agent, User, Peer, LoadBalancer
+from agents import User, Peer, LoadBalancer
 
 # 
 # Agent-based simulation.
